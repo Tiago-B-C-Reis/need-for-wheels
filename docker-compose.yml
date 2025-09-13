@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  db:
+    build:
+      context: .
+      dockerfile: database/Dockerfile
+    container_name: nfw_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - nfw_pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=nfw_user
+      - POSTGRES_PASSWORD=nfw_pass
+      - POSTGRES_DB=nfw_db
+
+  backend:
+    env_file:
+      - backend/.env
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: nfw_backend
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://nfw_user:nfw_pass@db:5432/nfw_db
+      - api_key=${api_key}
+    ports:
+      - "8000:8000"
+
+volumes:
+  nfw_pgdata:

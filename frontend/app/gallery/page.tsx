@@ -81,7 +81,10 @@ async function listExperiments(): Promise<Experiment[]> {
     const dir = path.join(base, id)
     let thumb = ""
     const files = fs.readdirSync(dir)
-    const image = files.find((f) => f.startsWith("car-")) || files.find((f)=>/\.(png|jpe?g|webp)$/i.test(f))
+    const image =
+      files.find((f) => f === "result.png" || f.startsWith("result")) ||
+      files.find((f) => f.startsWith("car-")) ||
+      files.find((f) => /\.(png|jpe?g|webp)$/i.test(f))
     if (image) thumb = `/experiments/${id}/${image}`
     let meta: Experiment["meta"] | undefined
     const metaPath = path.join(dir, "meta.json")

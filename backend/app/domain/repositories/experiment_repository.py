@@ -1,0 +1,9 @@
+from typing import Protocol, Sequence
+from ..entities.experiment import Experiment
+
+
+class ExperimentRepository(Protocol):
+    async def create(self, exp: Experiment) -> None: ...
+    async def list(self, limit: int = 50, offset: int = 0) -> Sequence[Experiment]: ...
+    async def delete(self, exp_id: str) -> None: ...
+
