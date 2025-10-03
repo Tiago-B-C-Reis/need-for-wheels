@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import Image from "next/image"
 
 type SubmitResult = {
@@ -53,7 +54,15 @@ export default function TryPage() {
     <main className="mx-auto max-w-3xl px-6 py-10">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Try it</h1>
-        <a href="/gallery" className="underline underline-offset-4">Gallery</a>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="rounded-md border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
+          >
+            Home
+          </Link>
+          <Link href="/gallery" className="underline underline-offset-4">Gallery</Link>
+        </div>
       </div>
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <div className="grid gap-4 sm:grid-cols-3">
@@ -117,4 +126,3 @@ export default function TryPage() {
     </main>
   )
 }
-

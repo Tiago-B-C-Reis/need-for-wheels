@@ -1,0 +1,26 @@
+from typing import Protocol, Optional
+from ..entities.user import User, EmailVerificationToken
+
+
+class UserRepository(Protocol):
+    async def create(self, user: User) -> None: ...
+
+    async def update(self, user: User) -> None: ...
+
+    async def get_by_email(self, email: str) -> Optional[User]: ...
+
+    async def get_by_id(self, user_id: str) -> Optional[User]: ...
+
+    async def get_by_provider(
+        self, *, provider: str, provider_user_id: str
+    ) -> Optional[User]: ...
+
+    async def create_verification_token(
+        self, token: EmailVerificationToken
+    ) -> None: ...
+
+    async def get_verification_token(
+        self, token: str
+    ) -> Optional[EmailVerificationToken]: ...
+
+    async def mark_token_consumed(self, token: str) -> None: ...

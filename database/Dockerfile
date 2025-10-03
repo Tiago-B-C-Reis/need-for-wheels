@@ -4,5 +4,4 @@ ENV POSTGRES_USER=nfw_user \
     POSTGRES_PASSWORD=nfw_pass \
     POSTGRES_DB=nfw_db
 
-COPY database/migrations /docker-entrypoint-initdb.d/
-
+COPY migrations /docker-entrypoint-initdb.d/

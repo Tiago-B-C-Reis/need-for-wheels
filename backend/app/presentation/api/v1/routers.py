@@ -7,6 +7,7 @@ from ....application.use_cases.create_experiment import CreateExperiment
 from ....application.use_cases.list_experiments import ListExperiments
 from .schemas import ExperimentIn, ExperimentOut
 from ....application.services.image_generation import ImageGenerator
+from .auth_router import router as auth_router
 
 
 async def get_session() -> AsyncSession:
@@ -14,10 +15,13 @@ async def get_session() -> AsyncSession:
         yield session
 
 
-router = APIRouter(prefix="/experiments", tags=["experiments"])
+router = APIRouter()
 
 
-@router.post("", response_model=ExperimentOut, status_code=201)
+experiments_router = APIRouter(prefix="/experiments", tags=["experiments"])
+
+
+@experiments_router.post("", response_model=ExperimentOut, status_code=201)
 async def create_experiment(payload: ExperimentIn, session: AsyncSession = Depends(get_session)):
     repo = SqlExperimentRepository(session)
     use_case = CreateExperiment(repo)
@@ -31,7 +35,7 @@ async def create_experiment(payload: ExperimentIn, session: AsyncSession = Depen
     return ExperimentOut(**exp.__dict__)
 
 
-@router.get("", response_model=list[ExperimentOut])
+@experiments_router.get("", response_model=list[ExperimentOut])
 async def list_experiments(limit: int = 50, offset: int = 0, session: AsyncSession = Depends(get_session)):
     repo = SqlExperimentRepository(session)
     use_case = ListExperiments(repo)
@@ -39,7 +43,7 @@ async def list_experiments(limit: int = 50, offset: int = 0, session: AsyncSessi
     return [ExperimentOut(**i.__dict__) for i in items]
 
 
-@router.post("/generate", response_description="Generated image bytes")
+@experiments_router.post("/generate", response_description="Generated image bytes")
 async def generate_image(
     brand: str | None = Form(default=None),
     model: str | None = Form(default=None),
@@ -76,3 +80,7 @@ async def generate_image(
         raise HTTPException(status_code=500, detail=str(e))
 
     return fastapi.Response(content=image_bytes, media_type="image/png")
+
+
+router.include_router(auth_router)
+router.include_router(experiments_router)
